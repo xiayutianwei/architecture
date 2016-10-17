@@ -6,7 +6,7 @@ package actors
 object ManagerActor{
   case class CreatePro(name:String)
   case class NextStep(name:String)
-  case class Result(reg:Array[Int],)
+  case class Result(reg:Array[Int],FUStatus:List[List[String]],InsStatus:List[List[Int]])
 }
 class ManagerActor {
 
