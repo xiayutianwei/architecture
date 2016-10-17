@@ -10,6 +10,9 @@ import ManagerActor._
 /**
  * Created by LiuZiwei on 2016/10/17.
  */
+object ProgramActor{
+  def props(instructions:List[Instruction]) = Props(new ProgramActor(instructions))
+}
 class ProgramActor(
                   instructions:List[Instruction]
                     ) extends Actor{
@@ -132,6 +135,24 @@ class ProgramActor(
   def getNextState(time:List[Int]) = {
     time.count(i => i > 0)
   }
+
+  def bool2String(t:Boolean) = {
+    if(t) "Yes"
+    else "No"
+  }
+
+  def FU2String(i:Int) = {
+    i match{
+      case 0 => "integer"
+      case 1 => "mult1"
+      case 2 => "mult2"
+      case 3 => "add"
+      case 4 => "divide"
+    }
+  }
+  def FuStatesToString(f:FUStatus) = {
+    List(bool2String(f.busy),f.Op,"F"+f.Fi.toString,"F"+f.Fj.toString,"F"+f.Fk.toString,FU2String(f.Qj),FU2String(f.Qk),bool2String(f.Rj),bool2String(f.Rk))
+  }
   var alreadyPutInstru = -1
   override def receive:Receive = {
     case NextStep(_) =>
@@ -153,7 +174,7 @@ class ProgramActor(
           }
         }
       }
-//      send !
+      send ! Result(RegStatus,MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
 
   }
 
