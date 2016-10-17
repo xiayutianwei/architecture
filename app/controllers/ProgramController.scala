@@ -23,14 +23,14 @@ class ProgramController @Inject()(
 
   def create(name:String) = Action.async{
     (managerActor ? CreatePro(name,List())).map{
-      case "ok" => Ok()
-      case "error" => Ok()
+      case "ok" => Ok("")
+      case "error" => Ok("")
     }
   }
 
   def nextStep(name:String) = Action.async{
     (managerActor ? NextStep(name)).map{
-      case Result(reg,fuS,inS) => Ok()
+      case Result(reg,fuS,inS) => Ok("")
     }
   }
 
