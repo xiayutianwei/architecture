@@ -32,11 +32,11 @@ class ProgramActor(
     for(i<- instructions.indices){
       MyInsStatus.update(i,InsStatus(instructions(i)))
     }
-   MyFUStatus.update(0,FUStatus(0))
-    MyFUStatus.update(1,FUStatus(10))
-  MyFUStatus.update(2,FUStatus(10))
-    MyFUStatus.update(3,FUStatus(2))
-    MyFUStatus.update(4,FUStatus(40))
+   MyFUStatus.update(0,FUStatus(0,false,"integer"))
+    MyFUStatus.update(1,FUStatus(10,false,"mult1"))
+  MyFUStatus.update(2,FUStatus(10,false,"mult2"))
+    MyFUStatus.update(3,FUStatus(2,false,"add"))
+    MyFUStatus.update(4,FUStatus(40,false,"divide"))
   for(i<- 0 until 31){RegStatus.update(i,-2)}
     log.info(s"${self.path} starting... instruction num:${instructions.length}")
   }
