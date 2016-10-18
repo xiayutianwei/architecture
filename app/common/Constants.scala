@@ -8,6 +8,7 @@ object Constants {
   val MultTime = 10
   val AddTime = 2
   val DivTime = 40
+  val LdTime = 1
 
 
 

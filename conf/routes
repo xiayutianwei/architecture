@@ -1,0 +1,11 @@
+
+
+GET         /architecture/create                        @controllers.ProgramController.create(name:String)
+GET         /architecture/nextstep                      @controllers.ProgramController.nextStep(name:String)
+
+
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET         /architecture/assets/lib/*file                 controllers.WebJarAssets.at(file)
+GET         /architecture/assets/*file                     controllers.Assets.at(path="/public", file)

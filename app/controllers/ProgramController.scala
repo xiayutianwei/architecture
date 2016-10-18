@@ -5,11 +5,15 @@ import akka.util.Timeout
 import com.google.inject.name.Named
 import play.api.mvc.{Action, Controller}
 import org.slf4j.LoggerFactory
-import com.google.inject.{Singleton,Inject}
+import com.google.inject.{Inject, Singleton}
 import actors.ManagerActor._
 import akka.pattern.ask
+
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.duration._
+import common._
+
+import scala.concurrent.Future
 /**
  * Created by LiuZiwei on 2016/10/17.
  */
@@ -22,16 +26,23 @@ class ProgramController @Inject()(
   implicit val timeout = Timeout(15.seconds)
 
   def create(name:String) = Action.async{
-    (managerActor ? CreatePro(name,List())).map{
-      case "ok" => Ok("")
-      case "error" => Ok("")
+    val ins = List(LD(dest=6,j= -1,k= -1),LD(dest=2,j= -1,k= -1),MULT(dest=0,j=2,k=4),SUBD(dest=8,j=2,k=6),
+      DIVD(dest=10,j=0,k=6),ADDD(dest=6,j=8,k=2))
+    (managerActor ? CreatePro(name,ins)).map{
+      case "ok" => Ok("ok")
+      case "error" => Ok("error")
     }
+//    Future.successful(Ok(""))
   }
 
   def nextStep(name:String) = Action.async{
     (managerActor ? NextStep(name)).map{
-      case Result(reg,fuS,inS) => Ok("")
+      case Result(reg,fuS,inS) => Ok("reg" + reg.mkString("  ")+"\r\n\r\n"+
+        "fuS"+fuS.map(f => f.mkString("  ")).mkString("\r\n")+"\r\n\r\n"+
+        "inS"+inS.map(i => i.mkString("  ")).mkString("\r\n")
+      )
     }
+//    Future.successful(Ok(""))
   }
 
 }

@@ -1,11 +1,35 @@
-@(reg:List[Int],FUStatus:List[List[String]],InsStatus:List[List[Int]]){
+@(name:String,reg:List[Int],FUStatus:List[List[String]],InsStatus:List[List[Int]]){
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title></title>
+
+  <link rel="stylesheet" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+  <script type="text/javascript" src="@routes.Assets.at("javascripts/bootstrap.min.js")"></script>
 </head>
 <body>
+
+  <div>
+    <div>
+      <table className="table table-striped" >
+        <thead>
+          <tr className="active" id="table-title">
+            <th   id="table-title-row">商家订单号</th>
+            <th   id="table-title-row">平台订单号</th>
+            <th   id="table-title-row">创建时间</th>
+            <th   id="table-title-row">过期时间</th>
+            <th   id="table-title-row">交易方式</th>
+            <th   id="table-title-row">订单信息</th>
+            <th   id="table-title-row">金额</th>
+            <th   id="table-title-row">状态</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+    </div>
+  </div>
 
 </body>
 </html>

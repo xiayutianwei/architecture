@@ -1,12 +1,14 @@
 package actors
 
-import akka.actor.{Props,Actor}
+import akka.actor.{Actor, Props}
 import com.sun.org.apache.bcel.internal.classfile.ConstantString
 import common.Constants
 import common.InsOp.InsOp
 import common._
 import org.slf4j.LoggerFactory
 import ManagerActor._
+
+import scala.collection.mutable.ListBuffer
 /**
  * Created by LiuZiwei on 2016/10/17.
  */
@@ -32,11 +34,11 @@ class ProgramActor(
     for(i<- instructions.indices){
       MyInsStatus.update(i,InsStatus(instructions(i)))
     }
-   MyFUStatus.update(0,FUStatus(0,false,"integer"))
-    MyFUStatus.update(1,FUStatus(10,false,"mult1"))
-  MyFUStatus.update(2,FUStatus(10,false,"mult2"))
-    MyFUStatus.update(3,FUStatus(2,false,"add"))
-    MyFUStatus.update(4,FUStatus(40,false,"divide"))
+   MyFUStatus.update(0,FUStatus(1,false))
+    MyFUStatus.update(1,FUStatus(10,false))
+  MyFUStatus.update(2,FUStatus(10,false))
+    MyFUStatus.update(3,FUStatus(2,false))
+    MyFUStatus.update(4,FUStatus(40,false))
   for(i<- 0 until 31){RegStatus.update(i,-2)}
     log.info(s"${self.path} starting... instruction num:${instructions.length}")
   }
@@ -72,6 +74,17 @@ class ProgramActor(
     }
   }
 
+  def getOpString(i:Int) = {
+    i match{
+      case 0 => "integer"
+      case 1 => "mult1"
+      case 2 => "mult2"
+      case 3 => "add"
+      case 4 => "divide"
+      case _ => ""
+    }
+  }
+
   def putInstruction(i:Int,clock:Int) = {
     val oldInsStatus = MyInsStatus(i)
     val insOpt = getFUNumOpt(oldInsStatus.instruction.op)
@@ -83,7 +96,7 @@ class ProgramActor(
       val qk = getRegQStatus(instruction.k)
       val rj = if(qj >= 0) false else true
       val rk = if(qk >= 0) false else true
-      MyFUStatus.update(insOpt.get, FUStatus(oldStatus.time, true, "",
+      MyFUStatus.update(insOpt.get, FUStatus(oldStatus.time, true, getOpString(insOpt.get),
         oldInsStatus.instruction.dest, instruction.j, instruction.k,
         qj,qk,rj,rk
       ))
@@ -92,6 +105,15 @@ class ProgramActor(
     }else false
   }
 
+  def canRead(i:Int) = {
+    val oldInsStatus = MyInsStatus(i)
+    val oldFuStatus = MyFUStatus(oldInsStatus.FUNum)
+    if(oldFuStatus.Rj && oldFuStatus.Rk){
+      true
+    }else{
+      false
+    }
+  }
 
   def ReadSource(i:Int,clock:Int) = {
     val oldInsStatus = MyInsStatus(i)
@@ -110,10 +132,24 @@ class ProgramActor(
       val times = if(oldInsStatus.FUNum == 1 || oldInsStatus.FUNum == 2) Constants.MultTime
       else if(oldInsStatus.FUNum == 3) Constants.AddTime
       else if(oldInsStatus.FUNum == 4) Constants.DivTime
-      else 0
+      else Constants.LdTime
       MyFUStatus.update(oldInsStatus.FUNum,oldFuStatus.copy(time = times))
     }else{
       MyFUStatus.update(oldInsStatus.FUNum,oldFuStatus.copy(time = time))
+    }
+  }
+
+  def canWrite(i:Int):Boolean = {
+    val dest = MyInsStatus(i).instruction.dest
+    if(dest == -1){
+      true
+    }else {
+      for (j <- 0 until i) {
+        if(MyInsStatus(j).instruction.j == dest || MyInsStatus(j).instruction.k == dest) {
+          if(MyInsStatus(j).times.count(_ > 0) <2) return false
+        }
+      }
+      true
     }
   }
 
@@ -148,6 +184,7 @@ class ProgramActor(
       case 2 => "mult2"
       case 3 => "add"
       case 4 => "divide"
+      case _ => ""
     }
   }
   def FuStatesToString(f:FUStatus) = {
@@ -162,19 +199,34 @@ class ProgramActor(
           putInstruction(0,clock)
         alreadyPutInstru = 0
       }else{
-        if(putInstruction(alreadyPutInstru+1,clock)) alreadyPutInstru = alreadyPutInstru+1
+        val needExe = new ListBuffer[(Int,Int)]() // 指令编号，需要的操作 1读数 2执行 3写回
+        val canPut = if(alreadyPutInstru+1<instructions.length && putInstruction(alreadyPutInstru+1,clock)) true else false
         for(i<- 0 to alreadyPutInstru){
           getNextState(MyInsStatus(i).times) match{
             case 1 => //读数
-              ReadSource(i,clock)
+              if(canRead(i)) needExe.append((i,1))
             case 2 => //执行
-              Exe(i,clock)
-            case 3 => //写会
-              WriteRes(i,clock)
+              needExe.append((i,2))
+            case 3 => //写回
+              if(canWrite(i)) needExe.append((i,3))
+            case _ =>
+
           }
         }
+        needExe.foreach{e =>
+          e._2 match{
+            case 1 =>
+              ReadSource(e._1,clock)
+            case 2 =>
+              Exe(e._1,clock)
+            case 3 =>
+              WriteRes(e._1,clock)
+            case _ =>
+          }
+        }
+        if(canPut) alreadyPutInstru = alreadyPutInstru + 1
       }
-      send ! Result(RegStatus,MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
+      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
 
   }
 
