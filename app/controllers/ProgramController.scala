@@ -29,7 +29,7 @@ class ProgramController @Inject()(
     val ins = List(LD(dest=6,j= -1,k= -1),LD(dest=2,j= -1,k= -1),MULT(dest=0,j=2,k=4),SUBD(dest=8,j=2,k=6),
       DIVD(dest=10,j=0,k=6),ADDD(dest=6,j=8,k=2))
     (managerActor ? CreatePro(name,ins)).map{
-      case "ok" => Ok("ok")
+      case "ok" => Ok(views.html.Index(name,Nil,Nil,Nil))
       case "error" => Ok("error")
     }
 //    Future.successful(Ok(""))
@@ -37,10 +37,12 @@ class ProgramController @Inject()(
 
   def nextStep(name:String) = Action.async{
     (managerActor ? NextStep(name)).map{
-      case Result(reg,fuS,inS) => Ok("reg" + reg.mkString("  ")+"\r\n\r\n"+
-        "fuS"+fuS.map(f => f.mkString("  ")).mkString("\r\n")+"\r\n\r\n"+
-        "inS"+inS.map(i => i.mkString("  ")).mkString("\r\n")
-      )
+      case Result(reg,fuS,inS) =>
+//        Ok("reg" + reg.mkString("  ")+"\r\n\r\n"+
+//        "fuS"+fuS.map(f => f.mkString("  ")).mkString("\r\n")+"\r\n\r\n"+
+//        "inS"+inS.map(i => i.mkString("  ")).mkString("\r\n")
+//      )
+      Ok(views.html.Index(name,reg.toList,fuS,inS))
     }
 //    Future.successful(Ok(""))
   }

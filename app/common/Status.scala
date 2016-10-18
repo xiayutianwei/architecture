@@ -6,7 +6,7 @@ package common
 trait Status
 
 case class InsStatus(instruction:Instruction,times:List[Int] = List(-1,-1,-1,-1),FUNum:Int = -1) extends Status
-case class FUStatus(time:Int=0,busy:Boolean=false,Op:String="",Fi:Int= -1,Fj:Int= -1,Fk:Int= -1,Qj:Int= -1,Qk:Int= -1,Rj:Boolean=false,Rk:Boolean=false)
+case class FUStatus(name:String="",time:Int=0,busy:Boolean=false,Op:String="",Fi:Int= -1,Fj:Int= -1,Fk:Int= -1,Qj:Int= -1,Qk:Int= -1,Rj:Boolean=false,Rk:Boolean=false)
 
 
 case object FUNum extends Enumeration{

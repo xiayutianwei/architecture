@@ -34,11 +34,11 @@ class ProgramActor(
     for(i<- instructions.indices){
       MyInsStatus.update(i,InsStatus(instructions(i)))
     }
-   MyFUStatus.update(0,FUStatus(1,false))
-    MyFUStatus.update(1,FUStatus(10,false))
-  MyFUStatus.update(2,FUStatus(10,false))
-    MyFUStatus.update(3,FUStatus(2,false))
-    MyFUStatus.update(4,FUStatus(40,false))
+   MyFUStatus.update(0,FUStatus("Integer",1,false))
+    MyFUStatus.update(1,FUStatus("Mult1",10,false))
+  MyFUStatus.update(2,FUStatus("Mult2",10,false))
+    MyFUStatus.update(3,FUStatus("Add",2,false))
+    MyFUStatus.update(4,FUStatus("Divide",40,false))
   for(i<- 0 until 31){RegStatus.update(i,-2)}
     log.info(s"${self.path} starting... instruction num:${instructions.length}")
   }
@@ -96,7 +96,7 @@ class ProgramActor(
       val qk = getRegQStatus(instruction.k)
       val rj = if(qj >= 0) false else true
       val rk = if(qk >= 0) false else true
-      MyFUStatus.update(insOpt.get, FUStatus(oldStatus.time, true, getOpString(insOpt.get),
+      MyFUStatus.update(insOpt.get, FUStatus(oldStatus.name,oldStatus.time, true, getOpString(insOpt.get),
         oldInsStatus.instruction.dest, instruction.j, instruction.k,
         qj,qk,rj,rk
       ))
@@ -188,7 +188,7 @@ class ProgramActor(
     }
   }
   def FuStatesToString(f:FUStatus) = {
-    List(bool2String(f.busy),f.Op,"F"+f.Fi.toString,"F"+f.Fj.toString,"F"+f.Fk.toString,FU2String(f.Qj),FU2String(f.Qk),bool2String(f.Rj),bool2String(f.Rk))
+    List(f.time.toString,f.name,bool2String(f.busy),f.Op,"F"+f.Fi.toString,"F"+f.Fj.toString,"F"+f.Fk.toString,FU2String(f.Qj),FU2String(f.Qk),bool2String(f.Rj),bool2String(f.Rk))
   }
   var alreadyPutInstru = -1
   override def receive:Receive = {

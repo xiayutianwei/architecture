@@ -1,4 +1,4 @@
-@(name:String,reg:List[Int],FUStatus:List[List[String]],InsStatus:List[List[Int]]){
+@(name:String,reg:List[String],FUStatus:List[List[String]],InsStatus:List[List[Int]])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,20 +12,74 @@
 
   <div>
     <div>
-      <table className="table table-striped" >
+      <h5>Instruction Status</h5>
+      <table class="table table-striped" >
         <thead>
-          <tr className="active" id="table-title">
-            <th   id="table-title-row">商家订单号</th>
-            <th   id="table-title-row">平台订单号</th>
-            <th   id="table-title-row">创建时间</th>
-            <th   id="table-title-row">过期时间</th>
-            <th   id="table-title-row">交易方式</th>
-            <th   id="table-title-row">订单信息</th>
-            <th   id="table-title-row">金额</th>
-            <th   id="table-title-row">状态</th>
+          <tr class="active" id="table-title">
+            <th   id="table-title-row">issue</th>
+            <th   id="table-title-row">read source</th>
+            <th   id="table-title-row">execute</th>
+            <th   id="table-title-row">write result</th>
           </tr>
         </thead>
         <tbody>
+          @InsStatus.map{i =>
+            <tr id="table-info">
+              @i.map{l =>
+                <td   id="table-info-row">@l</td>
+              }
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h5>Functional unit status</h5>
+      <table class="table table-striped" >
+        <thead>
+          <tr class="active" id="table-title">
+            <th   id="table-title-row">time</th>
+            <th   id="table-title-row">name</th>
+            <th   id="table-title-row">busy</th>
+            <th   id="table-title-row">Op</th>
+            <th   id="table-title-row">Fi</th>
+            <th   id="table-title-row">Fj</th>
+            <th   id="table-title-row">Fk</th>
+            <th   id="table-title-row">Qj</th>
+            <th   id="table-title-row">Qk</th>
+            <th   id="table-title-row">Rj</th>
+            <th   id="table-title-row">Rk</th>
+          </tr>
+        </thead>
+        <tbody>
+        @FUStatus.map{i =>
+          <tr id="table-info">
+            @i.map{l =>
+              <td   id="table-info-row">@l</td>
+            }
+          </tr>
+        }
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <h5>Register result status</h5>
+      <table class="table table-striped" >
+        <thead>
+          <tr class="active" id="table-title">
+            @for(i <- 0 to 30){
+              <th   id="table-title-row">@{"F"+i.toString}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="table-info">
+            @reg.map{l =>
+              <td   id="table-info-row">@l</td>
+            }
+          </tr>
         </tbody>
       </table>
     </div>
@@ -33,4 +87,3 @@
 
 </body>
 </html>
-}
