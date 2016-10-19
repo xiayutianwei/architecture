@@ -32,7 +32,13 @@ class ProgramController @Inject()(
       case "ok" => Ok(views.html.Index(name,Nil,Nil,Nil))
       case "error" => Ok("error")
     }
-//    Future.successful(Ok(""))
+  }
+
+  def reStart(name:String) = Action.async{
+    (managerActor ? ReStart(name)).map{
+      case Result(reg,fuS,inS) =>
+        Ok(views.html.Index(name,reg.toList,fuS,inS))
+    }
   }
 
   def nextStep(name:String) = Action.async{
@@ -44,7 +50,6 @@ class ProgramController @Inject()(
 //      )
       Ok(views.html.Index(name,reg.toList,fuS,inS))
     }
-//    Future.successful(Ok(""))
   }
 
 }

@@ -1,7 +1,8 @@
 
 
 GET         /architecture/create                        @controllers.ProgramController.create(name:String)
-GET         /architecture/nextstep                      @controllers.ProgramController.nextStep(name:String)
+GET         /architecture/nextstep/:name                      @controllers.ProgramController.nextStep(name:String)
+GET         /architecture/restart/:name                       @controllers.ProgramController.reStart(name:String)
 
 
 

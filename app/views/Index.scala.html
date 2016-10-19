@@ -12,6 +12,10 @@
 
   <div>
     <div>
+      <form  action="@routes.ProgramController.nextStep(name)"><button type="submit">下一步</button></form>
+      <form  action="@routes.ProgramController.reStart(name)"><button type="submit">重新开始</button></form>
+    </div>
+    <div>
       <h5>Instruction Status</h5>
       <table class="table table-striped" >
         <thead>

@@ -228,6 +228,23 @@ class ProgramActor(
       }
       send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
 
+
+    case ReStart(_) =>
+      val send = sender()
+      for(i<- instructions.indices){
+        MyInsStatus.update(i,InsStatus(instructions(i)))
+      }
+      MyFUStatus.update(0,FUStatus("Integer",1,false))
+      MyFUStatus.update(1,FUStatus("Mult1",10,false))
+      MyFUStatus.update(2,FUStatus("Mult2",10,false))
+      MyFUStatus.update(3,FUStatus("Add",2,false))
+      MyFUStatus.update(4,FUStatus("Divide",40,false))
+      for(i<- 0 until 31){RegStatus.update(i,-2)}
+      clock = 0
+      alreadyPutInstru = -1
+      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
+
+
   }
 
 }

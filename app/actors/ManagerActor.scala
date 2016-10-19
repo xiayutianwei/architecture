@@ -1,6 +1,6 @@
 package actors
 
-import actors.ManagerActor.{CreatePro, NextStep}
+import actors.ManagerActor._
 import akka.actor.{Actor, Props, Terminated}
 import common._
 import org.slf4j.LoggerFactory
@@ -12,6 +12,7 @@ object ManagerActor{
   case class CreatePro(name:String,ins:List[Instruction])
   case class NextStep(name:String)
   case class Result(reg:Array[String],FUStatus:List[List[String]],InsStatus:List[List[Int]])
+  case class ReStart(name:String)
   def props = Props[ManagerActor]
 }
 @Singleton
@@ -33,6 +34,12 @@ class ManagerActor @Inject() extends Actor{
       send ! "ok"
 
     case r@NextStep(name) =>
+      val send = sender()
+      val child = context.child(name)
+      if(child.isDefined) child.get.forward(r)
+      else send ! "error"
+
+    case r@ReStart(name) =>
       val send = sender()
       val child = context.child(name)
       if(child.isDefined) child.get.forward(r)
