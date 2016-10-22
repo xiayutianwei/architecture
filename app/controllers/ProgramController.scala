@@ -28,14 +28,6 @@ class ProgramController @Inject()(
   private val log = LoggerFactory.getLogger(this.getClass)
   implicit val timeout = Timeout(15.seconds)
 
-  def create(name:String) = Action.async{
-    val ins = List(LD(dest=6,j= -1,k= -1),LD(dest=2,j= -1,k= -1),MULT(dest=0,j=2,k=4),SUBD(dest=8,j=2,k=6),
-      DIVD(dest=10,j=0,k=6),ADDD(dest=6,j=8,k=2))
-    (managerActor ? CreatePro(name,ins)).map{
-      case "ok" => Ok(views.html.Index(name,Nil,Nil,Nil))
-      case "error" => Ok("error")
-    }
-  }
 
   def reStart(name:String) = Action.async{
     (managerActor ? ReStart(name)).map{
