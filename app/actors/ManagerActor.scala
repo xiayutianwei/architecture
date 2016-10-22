@@ -11,7 +11,7 @@ import com.google.inject.{Inject, Singleton}
 object ManagerActor{
   case class CreatePro(name:String,ins:List[Instruction])
   case class NextStep(name:String)
-  case class Result(reg:Array[String],FUStatus:List[List[String]],InsStatus:List[List[Int]])
+  case class Result(reg:Array[String],FUStatus:List[List[String]],InsStatus:List[List[String]])
   case class ReStart(name:String)
   def props = Props[ManagerActor]
 }

@@ -1,4 +1,4 @@
-@(name:String,reg:List[String],FUStatus:List[List[String]],InsStatus:List[List[Int]])
+@(name:String,reg:List[String],FUStatus:List[List[String]],InsStatus:List[List[String]])
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -20,6 +20,7 @@
       <table class="table table-striped" >
         <thead>
           <tr class="active" id="table-title">
+            <th   id="table-title-row">instruction</th>
             <th   id="table-title-row">issue</th>
             <th   id="table-title-row">read source</th>
             <th   id="table-title-row">execute</th>
@@ -80,7 +81,7 @@
         </thead>
         <tbody>
           <tr id="table-info">
-            @reg.map{l =>
+            @reg.map{l =>9
               <td   id="table-info-row">@l</td>
             }
           </tr>

@@ -187,8 +187,20 @@ class ProgramActor(
       case _ => ""
     }
   }
+
+  def int2Fint(i:Int) = {
+    if(i == -1) ""
+    else s"F$i"
+  }
   def FuStatesToString(f:FUStatus) = {
-    List(f.time.toString,f.name,bool2String(f.busy),f.Op,"F"+f.Fi.toString,"F"+f.Fj.toString,"F"+f.Fk.toString,FU2String(f.Qj),FU2String(f.Qk),bool2String(f.Rj),bool2String(f.Rk))
+    List(f.time.toString,f.name,bool2String(f.busy),f.Op,int2Fint(f.Fi),int2Fint(f.Fj),int2Fint(f.Fk),FU2String(f.Qj),FU2String(f.Qk),bool2String(f.Rj),bool2String(f.Rk))
+  }
+
+  def InsState2String(ins:InsStatus) = {
+    List(ins.instruction.toString) ++ ins.times.map{t =>
+      if(t != -1) t.toString
+      else ""
+    }
   }
   var alreadyPutInstru = -1
   override def receive:Receive = {
@@ -226,7 +238,7 @@ class ProgramActor(
         }
         if(canPut) alreadyPutInstru = alreadyPutInstru + 1
       }
-      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
+      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => InsState2String(i)).toList)
 
 
     case ReStart(_) => //重新开始，将所有状态还原
@@ -242,7 +254,7 @@ class ProgramActor(
       for(i<- 0 until 31){RegStatus.update(i,-2)}
       clock = 0
       alreadyPutInstru = -1
-      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => i.times).toList)
+      send ! Result(RegStatus.map(FU2String(_)),MyFUStatus.map(f => FuStatesToString(f)).toList,MyInsStatus.map(i => InsState2String(i)).toList)
 
 
   }

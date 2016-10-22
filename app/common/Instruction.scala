@@ -10,6 +10,7 @@ trait Instruction {
  implicit val dest:Int = -1
  implicit val j:Int = -1
   implicit val k:Int = -1
+  override def toString:String
 }
 case object InsOp extends Enumeration{
 
@@ -21,11 +22,31 @@ case object InsOp extends Enumeration{
   val DIVD = Value(5)
 }
 
-case class LD(override val op:InsOp = InsOp.LD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction
-case class ADDD(override val op:InsOp = InsOp.ADD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction
-case class SUBD(override val op:InsOp = InsOp.ADD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction
-case class MULT(override val op:InsOp = InsOp.MULT,override val dest:Int,override val j:Int,override val k:Int) extends Instruction
-case class DIVD(override val op:InsOp = InsOp.DIVD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction
+case class LD(override val op:InsOp = InsOp.LD,override val dest:Int,override val j:Int,override val k:Int)extends Instruction{
+  override def toString:String = {
+    s"LD F$dest"
+  }
+}
+case class ADDD(override val op:InsOp = InsOp.ADD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction{
+  override def toString = {
+    s"ADDD F$dest F$j F$k"
+  }
+}
+case class SUBD(override val op:InsOp = InsOp.ADD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction{
+  override def toString = {
+    s"SUBD F$dest F$j F$k"
+  }
+}
+case class MULT(override val op:InsOp = InsOp.MULT,override val dest:Int,override val j:Int,override val k:Int) extends Instruction{
+  override def toString = {
+    s"MULT F$dest F$j F$k"
+  }
+}
+case class DIVD(override val op:InsOp = InsOp.DIVD,override val dest:Int,override val j:Int,override val k:Int) extends Instruction{
+  override def toString = {
+    s"DIVD F$dest F$j F$k"
+  }
+}
 
 
 
